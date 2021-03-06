@@ -1,8 +1,8 @@
 {
-  "name": "spottie-figma-plugin",
+  "name": "qr-figma-plugin",
   "version": "1.0.0",
   "private": true,
-  "description": "Spottie - Search and insert images from Spotify.",
+  "description": "QR Coder - Generate and insert QR code into Figma",
   "main": "code.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
