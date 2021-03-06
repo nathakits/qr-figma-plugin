@@ -1,6 +1,5 @@
 // This plugin enables users to search for artists and tracks
 // and insert images for design using the Spotify API. 
-// Credit to Spotify for the API.
 
 // This file holds the main code for the plugins. It has access to the *document*.
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
@@ -15,112 +14,26 @@ figma.showUI(__html__, { width: 450, height: 650 });
 figma.ui.onmessage = msg => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'create-image') {
+  if (msg.type === 'create-qr-code') {
     // get current selection
     var currentSel = figma.currentPage.selection
-    // if selection has an object
-    if (currentSel.length > 0) {
-      // loop nodes to check type
-      currentSel.forEach(node => {
-        if (
-          node.type === 'FRAME' ||
-          node.type === 'ELLIPSE' ||
-          node.type === 'POLYGON' ||
-          node.type === 'RECTANGLE' ||
-          node.type === 'STAR' ||
-          node.type === 'VECTOR'
-        ) {
-          // insert fill to node
-          var buffer = msg.buffer
-          var hash = figma.createImage(buffer).hash
-          node.fills = [
-            { type: 'IMAGE', scaleMode: 'FILL', imageHash: hash }
-          ];
-        }
-        else {
-          figma.notify(`Please select a fillable object`)
-        }
-      });
-    } 
+    if (currentSel.length === 0) {
+      // insert fill to node
+      let vector = figma.createVector()
+      let viewport = figma.viewport.center
+      vector.x = viewport.x
+      vector.y = viewport.y
+      vector.resize(msg.size.width, msg.size.height)
+      console.log(msg.svgPath)
+      vector.vectorPaths = [{
+        windingRule: "EVENODD",
+        data: msg.svgPath,
+      }]
+      figma.currentPage.appendChild(vector);
+    }
     // else create a new rectangle and add to page
-    else if (currentSel.length === 0) {
-      // image
-      var buffer = msg.buffer
-      var hash = figma.createImage(buffer).hash
-      // viewport
-      var viewport = figma.viewport.center
-      // create rectangle and set image fill
-      const rect = figma.createRectangle();
-      // set x and y coordinates with viewport values
-      rect.x = viewport.x
-      rect.y = viewport.y
-      rect.resize(msg.size.width, msg.size.height)
-      // set type to IMAGE and set fill with image hash data
-      rect.fills = [
-        { type: 'IMAGE', scaleMode: 'FILL', imageHash: hash }
-      ];
-      // add image to Figma
-      figma.currentPage.appendChild(rect);
-    }
-  }
-
-  if (msg.type === 'create-image-array') {
-    // get current selection
-    var currentSel = figma.currentPage.selection
-    // if selection has an object
-    if (currentSel.length > 0) {
-      // loop nodes to check type
-      currentSel.forEach((node, i) => {
-        if (
-          node.type === 'FRAME' ||
-          node.type === 'ELLIPSE' ||
-          node.type === 'POLYGON' ||
-          node.type === 'RECTANGLE' ||
-          node.type === 'STAR' ||
-          node.type === 'VECTOR'
-        ) {
-          try {
-            // insert fill to node
-            var thumbs = msg.array
-            var buffer = thumbs[i]
-            var hash = figma.createImage(buffer).hash
-            node.fills = [
-              { type: 'IMAGE', scaleMode: 'FILL', imageHash: hash }
-            ];
-          } catch (error) {
-            // if number of selected objects is more than the images
-            // then no buffer to add
-            var pluralize = `image${ thumbs.length > 1 ? 's' : ''}`
-            var message = `Only added ${thumbs.length} ${pluralize} to selection. Please select more thumbnails.`
-            var noti = figma.notify(message)
-            setTimeout(() => {
-              noti.cancel()
-            }, 3000);
-          }
-        }
-        else {
-          figma.notify(`Please select a fillable object`)
-        }
-      });
-    }
-    else if (currentSel.length === 0) {
-      var nodes = []
-      // viewport
-      var viewport = figma.viewport.center
-      // create rectangle and set image fill
-      msg.array.forEach((buffer, i) => {
-        var hash = figma.createImage(buffer).hash
-        var rect = figma.createRectangle();
-        rect.x = viewport.x + (i * msg.size.width)
-        rect.y = viewport.y
-        // hard code rect size
-        rect.resize(msg.size.width, msg.size.height)
-        rect.fills = [
-          { type: 'IMAGE', scaleMode: 'FILL', imageHash: hash }
-        ];
-        figma.currentPage.appendChild(rect)
-        nodes.push(rect)
-      });
+    else {
+      currentSel = []
     }
   }
 
