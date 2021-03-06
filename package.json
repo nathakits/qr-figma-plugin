@@ -1,0 +1,21 @@
+{
+  "name": "spottie-figma-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Spottie - Search and insert images from Spotify.",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json -w"
+  },
+  "author": "Nathakit Sae-Tan",
+  "license": "MIT",
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "dependencies": {
+    "@figma/plugin-typings": "^1.19.0"
+  }
+}

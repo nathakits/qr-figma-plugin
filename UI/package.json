@@ -1,0 +1,62 @@
+{
+  "name": "spottie-figma-plugin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Spottie - Search and insert images from Spotify.",
+  "author": "Nathakit Sae-Tan",
+  "license": "MIT",
+  "scripts": {
+    "serve": "NODE_ENV=development vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "build-watch": "vue-cli-service build --watch-inline",
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "core-js": "^3.6.5",
+    "qs": "^6.9.6",
+    "vue": "^2.6.11",
+    "vue-long-click": "^0.0.4",
+    "vuex": "^3.5.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "devDependencies": {
+    "@tailwindcss/postcss7-compat": "^2.0.2",
+    "@vue/cli": "^4.4.6",
+    "@vue/cli-plugin-babel": "~4.4.0",
+    "@vue/cli-plugin-eslint": "~4.4.0",
+    "@vue/cli-service": "~4.4.0",
+    "autoprefixer": "^9.8.6",
+    "babel-eslint": "^10.1.0",
+    "css-loader": "^3.6.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "html-webpack-inline-source-plugin": "^1.0.0-beta.2",
+    "html-webpack-plugin": "^4.3.0",
+    "postcss": "^7.0.35",
+    "style-loader": "^1.2.1",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
+    "url-loader": "^4.1.0",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Spottie",
+  "id": "946462676168136646",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "UI/dist/index.html"
+}
