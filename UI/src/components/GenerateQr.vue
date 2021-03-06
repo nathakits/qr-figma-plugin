@@ -10,19 +10,9 @@
             type="text"
             class="text-xs px-4 py-1 border focus:ring-gray-500 focus:border-gray-900 hover:border-gray-900 w-full border-gray-300 rounded focus:outline-none text-gray-600 h-8"
             placeholder="Search"
-            v-model="searchQuery"
+            v-model="URLinput"
           >
         </div>
-      </div>
-      <div>
-        <button
-          class="text-xs bg-blue-600 text-white border border-blue-600 py-1 px-4 rounded disabled:opacity-50 h-8 cursor-default"
-          :class="searchQuery.length !== 0 ? 'hover:bg-blue-700' : 'cursor-default'"
-          @click="querySpotify()"
-          :disabled="searchQuery.length === 0"
-        >
-          Search
-        </button>
       </div>
     </div>
     <!-- views -->
@@ -32,7 +22,7 @@
         <div class="flex-initial">
           <button
             class="text-xs px-2 py-1 focus:outline-none rounded h-8 font-semibold cursor-default"
-            @click="activeView === 'main'"
+            @click="activeView = 'main'"
           >
             QR Code
           </button>
@@ -40,7 +30,7 @@
         <div class="flex-initial">
           <button
             class="text-xs px-2 py-1 focus:outline-none rounded h-8 font-semibold cursor-default"
-            @click="activeView === 'settings'"
+            @click="activeView = 'settings'"
           >
             Settings
           </button>
@@ -66,12 +56,12 @@
     <hr class="divide-solid my-2">
     <!-- QR Code -->
     <div class="overflow-y-auto overflow-x-hidden" style="height: calc(100vh - 163px);">
-      <template v-if="activeView === 'main'">
-        <div>QR Code</div>
-      </template>
-      <template v-else-if="activeView === 'settings'">
+      <div v-show="activeView === 'main'" class="w-full h-full">
+        <div id="canvas" class="flex justify-center items-center w-full h-full"></div>
+      </div>
+      <div v-show="activeView === 'settings'" class="w-full h-full">
         <div>Setting</div>
-      </template>
+      </div>
     </div>
     <!-- controls -->
     <div class="absolute bottom-0 left-0 right-0 bg-white">
@@ -79,17 +69,17 @@
       <div class="flex space-x-2 h-full px-4 pb-2 justify-end">
         <button
           class="text-xs text-gray-900 border border-gray-900 py-1 px-4 rounded disabled:opacity-50 flex-initial h-8 cursor-default"
-          @click="clearInput()"
+          @click="copySVGToClipboard(svgDOM)"
           :disabled="URLinput.length === 0"
         >
-          Clear
+          Copy SVG
         </button>
         <button
           class="text-xs text-gray-900 border border-gray-900 py-1 px-4 rounded disabled:opacity-50 flex-initial h-8 cursor-default"
-          @click="addToCanvas()"
+          @click="InsertQRCode()"
           :disabled="URLinput.length === 0"
         >
-          Insert
+          Insert QR code
         </button>
       </div>
     </div>
@@ -97,7 +87,8 @@
 </template>
 
 <script>
-import { notify, createImage, createImageArray } from "../helpers/figma-messages";
+import QRCodeStyling from "qr-code-styling";
+import { notify, createQRCode } from "../helpers/figma-messages";
 import Icons from "./Icons.vue";
 import Menu from "./Menu.vue"
 
@@ -107,44 +98,77 @@ export default {
   data() {
     return {
       activeView: 'main',
-      URLinput: '',
+      URLinput: window.location.href,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg',
+      svgPath: '',
+      svgDOM: '',
       size: {
-        width: 800,
-        height: 800
+        width: 400,
+        height: 400
       },
       tooltip: false
     };
   },
-  mounted() {
-    this.getNewReleases()
-  },
   watch: {
-    activeSearchView() {
-      // when tab changes
-      // reset and exit selection mode
-      this.resetLongpress()
+    URLinput() {
+      let qrcode = this.generateQRCode()
+      let canvas = document.getElementsByTagName('canvas')[0]
+      if (canvas) {
+        // replace existing canvas
+        canvas.remove()
+        qrcode.append(document.getElementById("canvas"))
+
+        // get image blob
+
+        // get svg path for inserting into
+        // var parser = new DOMParser();
+        // var doc = parser.parseFromString(svgString, "image/svg+xml");
+        // var pathDOM = doc.querySelector('path')
+        // var path = pathDOM.getAttribute('d')
+        // this.svgPath = path
+        // set svg for copying to clipboard
+        let svgString = qrcode._qr.createSvgTag(12)
+        this.svgDOM = svgString
+      } else {
+        qrcode.append(document.getElementById("canvas"))
+      }
     }
   },
+  mounted() {
+    let qrcode = this.generateQRCode()
+    qrcode.append(document.getElementById("canvas"))
+    // set svg for copying to clipboard
+    let svgString = qrcode._qr.createSvgTag(12)
+    this.svgDOM = svgString
+  },
   methods: {
-    clearInput() {
-      this.URLinput = ''
-      // var input = document.querySelector('input')
-      // input.focus()
+    generateQRCode() {
+      var options = {
+        width: this.size.width,
+        height: this.size.height,
+        data: this.URLinput,
+        image: this.image,
+        backgroundOptions: {
+          color: "#ffffff",
+        },
+        imageOptions: {
+          crossOrigin: "anonymous",
+          margin: 20
+        }
+      }
+      return new QRCodeStyling(options)
     },
-    addToCanvas(imageURL) {
-      if (this.longpress === false) {
-        axios({
-          method: 'get',
-          url: imageURL,
-          responseType: 'arraybuffer'
-        })
-        .then( response => {
-          var arrayBufferView = new Uint8Array( response.data );
-          // send data to figma
-          createImage(arrayBufferView, this.size)
-        })
+    InsertQRCode() {
+      if (this.svgPath) {
+        createQRCode(this.svgPath, this.size)
+      } else {
+        notify('No SVG data')
       }
     },
+    copySVGToClipboard(svgDOM) {
+      navigator.clipboard.writeText(svgDOM);
+      notify(`SVG copied`)
+    }
   }
 };
 </script>
