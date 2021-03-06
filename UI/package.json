@@ -8,11 +8,12 @@
   "scripts": {
     "serve": "NODE_ENV=development vue-cli-service serve",
     "build": "vue-cli-service build",
-    "build-watch": "vue-cli-service build --watch-inline",
+    "build-watch": "vue-cli-service build --watch-inline"
   },
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "qr-code-styling": "^1.3.4",
     "qs": "^6.9.6",
     "vue": "^2.6.11",
     "vue-long-click": "^0.0.4",
