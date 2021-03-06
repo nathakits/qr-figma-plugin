@@ -102,7 +102,7 @@ import Icons from "./Icons.vue";
 import Menu from "./Menu.vue"
 
 export default {
-  name: "SearchSpotify",
+  name: "GenerateQr",
   components: {Icons, Menu},
   data() {
     return {

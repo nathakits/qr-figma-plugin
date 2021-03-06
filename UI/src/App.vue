@@ -1,16 +1,16 @@
 <template>
   <div id="app" class="h-full py-2">
-    <SearchSpotify />
+    <GenerateQr />
   </div>
 </template>
 
 <script>
-import SearchSpotify from "./components/SearchSpotify.vue";
+import GenerateQr from "./components/GenerateQr.vue";
 
 export default {
   name: "App",
   components: {
-    SearchSpotify
+    GenerateQr
   }
 };
 </script>
