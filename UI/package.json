@@ -54,6 +54,7 @@
     "html-webpack-plugin": "^4.3.0",
     "postcss": "^7.0.35",
     "style-loader": "^1.2.1",
+    "svgo": "^2.2.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "url-loader": "^4.1.0",
     "vue-template-compiler": "^2.6.11",
