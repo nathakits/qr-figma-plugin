@@ -21,10 +21,10 @@ figma.ui.onmessage = msg => {
             vector.x = viewport.x;
             vector.y = viewport.y;
             vector.resize(msg.size.width, msg.size.height);
-            console.log(msg.svgPath);
+            console.log(typeof msg.svgPath);
             vector.vectorPaths = [{
                     windingRule: "EVENODD",
-                    data: msg.svgPath,
+                    data: `${msg.svgPath}`,
                 }];
             figma.currentPage.appendChild(vector);
         }
