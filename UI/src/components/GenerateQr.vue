@@ -116,6 +116,7 @@
 
 <script>
 import QRCodeStyling from "qr-code-styling";
+import Snap from "snapsvg-cjs";
 import { notify, createQRCode } from "../helpers/figma-messages";
 import Icons from "./Icons.vue";
 import Menu from "./Menu.vue"
@@ -133,8 +134,8 @@ export default {
       svgPath: '',
       svgDOM: '',
       size: {
-        width: 400,
-        height: 400
+        width: 250,
+        height: 250
       },
       tooltip: false
     };
@@ -148,10 +149,7 @@ export default {
         canvas.remove()
         qrcode.append(document.getElementById("canvas"))
         let svgString = qrcode._qr.createSvgTag()
-        let optimizedSVG = this.optimzeSVG(svgString)
-        let svg = this.transfromSVGtoDOM(optimizedSVG.data)
-        this.svgPath = svg
-        this.svgDOM = optimizedSVG.data
+        this.svgPath = this.transfromSVGtoDOM(svgString)
       } else {
         qrcode.append(document.getElementById("canvas"))
       }
@@ -162,10 +160,7 @@ export default {
     qrcode.append(document.getElementById("canvas"))
     // set svg for copying to clipboard
     let svgString = qrcode._qr.createSvgTag()
-    let optimizedSVG = this.optimzeSVG(svgString)
-    let svg = this.transfromSVGtoDOM(optimizedSVG.data)
-    this.svgPath = svg
-    this.svgDOM = optimizedSVG.data
+    this.svgPath = this.transfromSVGtoDOM(svgString)
   },
   methods: {
     generateQRCode() {
@@ -186,7 +181,6 @@ export default {
     },
     InsertQRCode() {
       if (this.svgPath) {
-        console.log(this.svgPath);
         createQRCode(this.svgPath, this.size)
       } else {
         notify('No SVG data')
@@ -210,8 +204,16 @@ export default {
       var doc = parser.parseFromString(string, "image/svg+xml");
       var pathDOM = doc.querySelector('path')
       var path = pathDOM.getAttribute('d')
-      return path
-    }
+      var absolutePath = Snap.path.toAbsolute(path)
+      var sanitizedPath = absolutePath
+                            .toString()
+                            .replace(/,/g, " ")
+                            .replace(/(L)/g, " $1 ")
+                            .replace(/(Z)/g, " $1 ")
+                            .replace(/(M)/g, "$1 ")
+                            .trim()
+      return sanitizedPath
+    },
   }
 };
 </script>
