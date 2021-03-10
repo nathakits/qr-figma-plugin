@@ -6,7 +6,7 @@
 // full browser environment (see documentation).
 
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { width: 400, height: 600 });
+figma.showUI(__html__, { width: 400, height: 500 });
 
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
@@ -14,7 +14,7 @@ figma.showUI(__html__, { width: 400, height: 600 });
 figma.ui.onmessage = msg => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
-  if (msg.type === 'create-qr-code') {
+  if (msg.type === 'create-qr-code-vector') {
     // get current selection
     var currentSel = figma.currentPage.selection
     if (currentSel.length === 0) {
