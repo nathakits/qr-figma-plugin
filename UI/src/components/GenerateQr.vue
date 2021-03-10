@@ -57,11 +57,18 @@
         </div>
       </div>
       <button
-          class="text-xs text-gray-900 border border-gray-900 py-1 px-4 rounded disabled:opacity-50 flex-initial h-8 cursor-default"
-          :disabled="URLinput.length === 0"
-        >
-          Upload Image
-        </button>
+        class="text-xs text-gray-900 border border-gray-900 py-1 px-4 rounded disabled:opacity-50 flex-initial h-8 cursor-default"
+        :disabled="URLinput.length === 0"
+        @click="upload()"
+      >
+        Upload Image
+      </button>
+      <input
+        style="display:none;"
+        type="file"
+        id="file-selector"
+        accept=".jpg, .jpeg, .png"
+      >
     </div>
     <hr class="divide-solid my-2">
     <!-- QR Code -->
@@ -80,10 +87,10 @@
         <template v-if="activeView === 'raster'">
           <button
             class="text-xs text-gray-900 border border-gray-900 py-1 px-4 rounded disabled:opacity-50 flex-initial h-8 cursor-default"
-            @click="copySVGToClipboard(svgDOM)"
+            @click="reset()"
             :disabled="URLinput.length === 0"
           >
-            Clear
+            Reset
           </button>
           <button
             class="text-xs text-gray-900 border border-gray-900 py-1 px-4 rounded disabled:opacity-50 flex-initial h-8 cursor-default"
@@ -117,10 +124,9 @@
 <script>
 import QRCodeStyling from "qr-code-styling";
 import Snap from "snapsvg-cjs";
-import { notify, createQRCode } from "../helpers/figma-messages";
+import { notify, createQRCodeVector } from "../helpers/figma-messages";
 import Icons from "./Icons.vue";
 import Menu from "./Menu.vue"
-
 import { optimize } from 'svgo/dist/svgo.browser.js'
 
 export default {
@@ -130,9 +136,10 @@ export default {
     return {
       activeView: 'raster',
       URLinput: 'https://figma.com',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg',
+      image: '',
       svgPath: '',
       svgDOM: '',
+      base64Image: '',
       size: {
         width: 250,
         height: 250
@@ -153,6 +160,14 @@ export default {
       } else {
         qrcode.append(document.getElementById("canvas"))
       }
+    },
+    base64Image() {
+      let qrcode = this.generateQRCode()
+      let canvas = document.getElementsByTagName('canvas')[0]
+      if (canvas) {
+        canvas.remove()
+        qrcode.append(document.getElementById("canvas"))
+      }
     }
   },
   mounted() {
@@ -168,20 +183,20 @@ export default {
         width: this.size.width,
         height: this.size.height,
         data: this.URLinput,
-        image: this.image,
+        image: this.base64Image,
         backgroundOptions: {
           color: "#ffffff",
         },
         imageOptions: {
           crossOrigin: "anonymous",
-          margin: 20
+          margin: 10
         }
       }
       return new QRCodeStyling(options)
     },
     InsertQRCode() {
       if (this.svgPath) {
-        createQRCode(this.svgPath, this.size)
+        createQRCodeVector(this.svgPath, this.size)
       } else {
         notify('No SVG data')
       }
@@ -214,6 +229,31 @@ export default {
                             .trim()
       return sanitizedPath
     },
+    reset() {
+      if (this.activeView === 'raster') {
+        this.URLinput = 'https://figma.com'
+        this.image = ''
+      } else if (this.activeView === 'vector') {
+        this.URLinput = 'https://figma.com'
+      }
+    },
+    upload() {
+      const fileSelector = document.getElementById('file-selector')
+      fileSelector.click()
+      fileSelector.addEventListener('change', (event) => {
+        const fileList = event.target.files;
+        this.encodeImageFileAsURL(fileList)
+        
+      })
+    },
+    encodeImageFileAsURL(element) {
+      var file = element[0]
+      var reader = new FileReader();
+      reader.onloadend = () => {
+        this.base64Image = reader.result
+      }
+      reader.readAsDataURL(file);
+    }
   }
 };
 </script>
