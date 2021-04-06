@@ -118,7 +118,7 @@ export default {
   components: {Icons, Menu},
   data() {
     return {
-      activeView: 'vector',
+      activeView: 'raster',
       URLinput: 'https://figma.com',
       image: '',
       svgPath: '',
