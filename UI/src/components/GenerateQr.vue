@@ -133,24 +133,6 @@ export default {
       tooltipMsg: 'To scan this code, use a QR Code scanner app on your phone or other camera apps.',
     };
   },
-  watch: {
-    URLinput() {
-      let qr = this.qrcode
-      qr.update({data: this.URLinput})
-      console.log(`QR Code data updated: ${this.URLinput}`);
-      let vectorSVG = document.getElementsByTagName('svg')[2]
-      if (vectorSVG) {
-        // replace for vector
-        vectorSVG.remove()
-        this.setSVG(qr)
-      }
-    },
-    base64Image() {
-      let qr = this.qrcode
-      qr.update({image: this.base64Image})
-      console.log(`Image updated`);
-    }
-  },
   mounted() {
     let qr = this.qrcode
     var options = {
@@ -175,6 +157,24 @@ export default {
     this.setSVG(qr)
     console.log(`Raster set`);
     console.log(`Vector set`);
+  },
+  watch: {
+    URLinput() {
+      let qr = this.qrcode
+      qr.update({data: this.URLinput})
+      console.log(`QR Code data updated: ${this.URLinput}`);
+      let vectorSVG = document.getElementsByTagName('svg')[2]
+      if (vectorSVG) {
+        // replace for vector
+        vectorSVG.remove()
+        this.setSVG(qr)
+      }
+    },
+    base64Image() {
+      let qr = this.qrcode
+      qr.update({image: this.base64Image})
+      console.log(`Image updated`);
+    }
   },
   methods: {
     setSVG(qr) {
