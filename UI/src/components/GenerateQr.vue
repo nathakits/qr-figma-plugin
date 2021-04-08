@@ -44,6 +44,7 @@
       </div>
     </div>
     <hr class="divide-solid my-2">
+    <!-- search and insert image -->
     <div class="flex items-center space-x-2 px-4">
       <div class="flex-1">
         <div class="focus-within:text-gray-600 text-gray-400">
@@ -108,10 +109,10 @@
 <script>
 import QRCodeStyling from "qr-code-styling";
 import Snap from "snapsvg-cjs";
-import { notify, createQRCodeVector } from "../helpers/figma-messages";
+import { notify, createQRCodeVector, createQRCodeRaster } from "../helpers/figma-messages";
 import Icons from "./Icons.vue";
 import Menu from "./Menu.vue"
-import { optimize } from 'svgo/dist/svgo.browser.js'
+// import { optimize } from 'svgo/dist/svgo.browser.js'
 
 export default {
   name: "GenerateQr",
@@ -131,6 +132,7 @@ export default {
       tooltip: false,
       qrcode: new QRCodeStyling(),
       tooltipMsg: 'To scan this code, use a QR Code scanner app on your phone or other camera apps.',
+      imgBuffer: ''
     };
   },
   mounted() {
@@ -155,6 +157,7 @@ export default {
     qr.append(document.getElementById("canvasRaster"))
     // set svg for vector
     this.setSVG(qr)
+    this.setCanvasToUint8Array()
     console.log(`Raster set`);
     console.log(`Vector set`);
   },
@@ -169,10 +172,12 @@ export default {
         vectorSVG.remove()
         this.setSVG(qr)
       }
+      this.setCanvasToUint8Array()
     },
     base64Image() {
       let qr = this.qrcode
       qr.update({image: this.base64Image})
+      this.setCanvasToUint8Array()
       console.log(`Image updated`);
     }
   },
@@ -189,24 +194,25 @@ export default {
       this.svgPath = this.transfromSVGtoDOM(svgString)
     },
     InsertQRCode() {
-      if (this.svgPath) {
-        createQRCodeVector(this.svgPath, this.size)
-      } else {
-        notify('No SVG data')
+      if (this.activeView === 'vector') {
+        if (this.svgPath) {
+          createQRCodeVector(this.svgPath, this.size)
+        } else {
+          notify('No SVG data')
+        }
+      }
+      else {
+        if (this.imgBuffer) {
+          createQRCodeRaster(this.imgBuffer, this.size)
+        } else {
+          notify('No image buffer')
+        }
       }
     },
     copySVGToClipboard(svg) {
       console.log(svg);
       navigator.clipboard.writeText(svg);
       notify(`SVG copied`)
-    },
-    optimzeSVG(svg) {
-      return optimize(svg, {
-        // optional but recommended field
-        path: 'path-to.svg',
-        // all config fields are also available here
-        multipass: true
-      })
     },
     transfromSVGtoDOM(string) {
       var parser = new DOMParser();
@@ -249,6 +255,17 @@ export default {
         this.base64Image = reader.result
       }
       reader.readAsDataURL(file);
+    },
+    setCanvasToUint8Array() {
+      setTimeout(() => {
+        var canvas = document.getElementsByTagName('canvas')[0];
+        canvas.toBlob((blob) => {
+          new Response(blob).arrayBuffer().then(result => {
+            this.imgBuffer = new Uint8Array(result)
+            
+          })
+        })
+      }, 150);
     }
   }
 };
