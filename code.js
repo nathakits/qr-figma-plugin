@@ -4,14 +4,14 @@
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser environment (see documentation).
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { width: 400, height: 600 });
+figma.showUI(__html__, { width: 400, height: 500 });
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
 figma.ui.onmessage = msg => {
     // One way of distinguishing between different types of messages sent from
     // your HTML page is to use an object with a "type" property like this.
-    if (msg.type === 'create-qr-code') {
+    if (msg.type === 'create-qr-code-vector') {
         // get current selection
         var currentSel = figma.currentPage.selection;
         if (currentSel.length === 0) {
@@ -60,6 +60,32 @@ figma.ui.onmessage = msg => {
             figma.currentPage.appendChild(frame);
         }
         // else create a new rectangle and add to page
+        else {
+            currentSel = [];
+        }
+    }
+    if (msg.type === 'create-qr-code-raster') {
+        var currentSel = figma.currentPage.selection;
+        if (currentSel.length === 0) {
+            // image
+            var buffer = msg.buffer;
+            console.log(buffer);
+            var hash = figma.createImage(buffer).hash;
+            // viewport
+            var viewport = figma.viewport.center;
+            // create rectangle and set image fill
+            const rect = figma.createRectangle();
+            // set x and y coordinates with viewport values
+            rect.x = viewport.x;
+            rect.y = viewport.y;
+            rect.resize(msg.size.width, msg.size.height);
+            // set type to IMAGE and set fill with image hash data
+            rect.fills = [
+                { type: 'IMAGE', scaleMode: 'FILL', imageHash: hash }
+            ];
+            // add image to Figma
+            figma.currentPage.appendChild(rect);
+        }
         else {
             currentSel = [];
         }
