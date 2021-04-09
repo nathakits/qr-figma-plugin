@@ -8,6 +8,11 @@ module.exports = {
   css: {
     extract: true, // don't extract the internal css chunks to external file
   },
+  chainWebpack: config => {
+    config.performance
+      .maxEntrypointSize(300000)
+      .maxAssetSize(300000)
+  },
   configureWebpack: {
     watch, // watch the file changes and build the final UI that can used by Figma plugin directly
     optimization: {
