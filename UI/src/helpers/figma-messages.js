@@ -7,4 +7,8 @@ const createQRCodeVector = (svgPath, size) => {
   parent.postMessage({ pluginMessage: { type: 'create-qr-code-vector', svgPath, size } }, '*')
 }
 
-export { notify, createQRCodeVector }
+const createQRCodeRaster = (buffer, size) => {
+  parent.postMessage({ pluginMessage: { type: 'create-qr-code-raster', buffer, size } }, '*')
+}
+
+export { notify, createQRCodeVector, createQRCodeRaster }
