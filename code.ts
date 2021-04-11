@@ -6,7 +6,7 @@
 // full browser environment (see documentation).
 
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { width: 400, height: 500 });
+figma.showUI(__html__, { width: 350, height: 450 });
 
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
@@ -62,36 +62,76 @@ figma.ui.onmessage = msg => {
       vector.y = padding
       figma.currentPage.appendChild(frame);
     }
-    // else create a new rectangle and add to page
     else {
-      currentSel = []
+      // delete current vector and replace with new one
+      currentSel.forEach(node => {
+        if (node.type === 'FRAME') {
+          node[0].vectorPaths = [
+            {
+              windingRule: "NONZERO",
+              data: msg.svgPath
+            }
+          ]
+        }
+        else {
+          figma.notify(`Please select a Frame`)
+        }
+      });
     }
   }
-
+  // press insert and triggers this function
   if (msg.type === 'create-qr-code-raster') {
+    // get the current selection in Figma
     var currentSel = figma.currentPage.selection
+    var padding = 16
+    // if no selection
     if (currentSel.length === 0) {
-      // image
+      // get image uint8array from canvas
       var buffer = msg.buffer
-      console.log(buffer)
+      // convert uint8array to hash
       var hash = figma.createImage(buffer).hash
-      // viewport
+      // get center viewport coordinates
       var viewport = figma.viewport.center
-      // create rectangle and set image fill
+      // create a new rectangle
       const rect = figma.createRectangle();
-      // set x and y coordinates with viewport values
+      // set x and y viewport coordinates to the rectangle
       rect.x = viewport.x
       rect.y = viewport.y
-      rect.resize(msg.size.width, msg.size.height)
+      rect.resize(msg.size.width + (padding * 2), msg.size.height + (padding * 2))
       // set type to IMAGE and set fill with image hash data
       rect.fills = [
-        { type: 'IMAGE', scaleMode: 'FILL', imageHash: hash }
+        { 
+          type: 'IMAGE',
+          scaleMode: 'FILL',
+          imageHash: hash
+        }
       ];
       // add image to Figma
       figma.currentPage.appendChild(rect);
     }
+    // else replace old raster with new data
     else {
-      currentSel = []
+      // loop nodes to check type
+      currentSel.forEach(node => {
+        if (
+          node.type === 'FRAME' ||
+          node.type === 'ELLIPSE' ||
+          node.type === 'POLYGON' ||
+          node.type === 'RECTANGLE' ||
+          node.type === 'STAR' ||
+          node.type === 'VECTOR'
+        ) {
+          // insert fill to node
+          var buffer = msg.buffer
+          var hash = figma.createImage(buffer).hash
+          node.fills = [
+            { type: 'IMAGE', scaleMode: 'FILL', imageHash: hash }
+          ];
+        }
+        else {
+          figma.notify(`Please select a fillable object`)
+        }
+      });
     }
   }
 
