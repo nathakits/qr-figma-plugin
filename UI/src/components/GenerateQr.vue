@@ -9,7 +9,7 @@
           <div class="flex-initial">
             <button
               class="text-xs px-2 py-1 focus:outline-none rounded h-8 cursor-default "
-              :class="activeView === 'raster' ? 'font-semibold text-gray-900' : 'text-gray-400' "
+              :class="activeView === 'raster' ? 'font-bold text-gray-900' : 'text-gray-400' "
               @click="activeView = 'raster'"
             >
               Raster
@@ -18,29 +18,29 @@
           <div class="flex-initial">
             <button
               class="text-xs px-2 py-1 focus:outline-none rounded h-8 cursor-default"
-              :class="activeView === 'vector' ? 'font-semibold text-gray-900' : 'text-gray-400' "
+              :class="activeView === 'vector' ? 'font-bold text-gray-900' : 'text-gray-400' "
               @click="activeView = 'vector'"
             >
               Vector
             </button>
           </div>
         </div>
-        <template>
-          <Icons
-            id="infoIcon"
-            class="relative"
-            name="info"
-            @mouseover.native="tooltip = true"
-            @mouseleave.native="tooltip = false"
+        <Icons
+          id="infoIcon"
+          class="relative"
+          name="info"
+          @mouseover.native="tooltip = true"
+          @mouseleave.native="tooltip = false"
+        >
+          <div
+            v-show="tooltip"
+            class="absolute bg-gray-900 text-white flex justify-center p-2 right-7 rounded z-50 flex-col shadow"
+            style="width:200px;top:0;"
           >
-            <div
-              v-show="tooltip"
-              class="absolute bg-gray-900 text-white flex justify-center p-2 right-7 rounded z-50 flex-col shadow"
-            >
-              <p class="text-xs w-max">{{ tooltipMsg }}</p>
-            </div>
-          </Icons>
-        </template>
+            <p class="text-xs pb-2">{{ tooltipMsg }}</p>
+            <p class="text-xs">Note: Raster image padding could change as more data are encoded.</p>
+          </div>
+        </Icons>
       </div>
     </div>
     <hr class="divide-solid my-2">
@@ -131,18 +131,19 @@ export default {
       },
       tooltip: false,
       qrcode: new QRCodeStyling(),
-      tooltipMsg: 'To scan this code, use a QR Code scanner app on your phone or other camera apps.',
-      imgBuffer: ''
+      tooltipMsg: 'To scan this code, use a QR scanner app on your phone or other camera apps.',
+      imgBuffer: '',
+      padding: 16,
     };
   },
   mounted() {
     let qr = this.qrcode
     var options = {
-      width: this.size.width,
-      height: this.size.height,
+      width: this.size.width + (this.padding*2),
+      height: this.size.height + (this.padding*2),
       data: this.URLinput,
       image: this.base64Image,
-      margin: 0,
+      margin: this.padding,
       backgroundOptions: {
         color: "#ffffff",
       },
