@@ -46,7 +46,7 @@ export default {
       menuItems: [
         {
           name: 'GitHub Repo',
-          url: 'https://github.com/nathakits/spottie-figma-plugin'
+          url: 'https://github.com/nathakits/qr-figma-plugin'
         },
         {
           name: 'divider',
