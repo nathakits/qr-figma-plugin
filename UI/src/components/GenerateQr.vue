@@ -197,14 +197,14 @@ export default {
     InsertQRCode() {
       if (this.activeView === 'vector') {
         if (this.svgPath) {
-          createQRCodeVector(this.svgPath, this.size)
+          createQRCodeVector(this.svgPath, this.size, this.padding)
         } else {
           notify('No SVG data')
         }
       }
       else {
         if (this.imgBuffer) {
-          createQRCodeRaster(this.imgBuffer, this.size)
+          createQRCodeRaster(this.imgBuffer, this.size, this.padding)
         } else {
           notify('No image buffer')
         }
