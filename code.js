@@ -1,8 +1,39 @@
-// This plugin enables users to search for artists and tracks
-// and insert images for design using the Spotify API. 
+// This plugin enables users to generate and insert QR codes from URLs into Figma
 // This file holds the main code for the plugins. It has access to the *document*.
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser environment (see documentation).
+// functions
+// resize vector with padding relative to frame dimension
+let resizeVector = (msg, node, vector) => {
+    let scale = node.width / msg.size.width;
+    let padding = msg.padding * scale;
+    let width = node.width - (padding * 2);
+    let height = node.height - (padding * 2);
+    vector.vectorPaths = [
+        {
+            windingRule: "NONZERO",
+            data: msg.svgPath
+        }
+    ];
+    vector.fills = [
+        {
+            type: 'SOLID',
+            color: {
+                r: 0,
+                g: 0,
+                b: 0
+            }
+        }
+    ];
+    vector.resize(width, height);
+    vector.strokes = [];
+    vector.x = padding;
+    vector.y = padding;
+    vector.constraints = {
+        horizontal: "SCALE",
+        vertical: "SCALE"
+    };
+};
 // This shows the HTML page in "ui.html".
 figma.showUI(__html__, { width: 350, height: 450 });
 // Calls to "parent.postMessage" from within the HTML page will trigger this
@@ -19,7 +50,7 @@ figma.ui.onmessage = msg => {
             let frame = figma.createFrame();
             let vector = figma.createVector();
             let viewport = figma.viewport.center;
-            let padding = 16;
+            let padding = msg.padding;
             // set frame
             frame.fills = [
                 {
@@ -57,18 +88,45 @@ figma.ui.onmessage = msg => {
             vector.strokes = [];
             vector.x = padding;
             vector.y = padding;
+            vector.constraints = {
+                horizontal: "SCALE",
+                vertical: "SCALE"
+            };
             figma.currentPage.appendChild(frame);
         }
         else {
             // delete current vector and replace with new one
             currentSel.forEach(node => {
                 if (node.type === 'FRAME') {
-                    node[0].vectorPaths = [
+                    node.fills = [
                         {
-                            windingRule: "NONZERO",
-                            data: msg.svgPath
+                            type: 'SOLID',
+                            color: {
+                                r: 1,
+                                g: 1,
+                                b: 1
+                            }
                         }
                     ];
+                    node.name = 'QR Code';
+                    // if node has no children
+                    if (node.children.length === 0) {
+                        // create and append new vector
+                        let vector = figma.createVector();
+                        node.appendChild(vector);
+                        resizeVector(msg, node, vector);
+                    }
+                    // if node has child with type vector
+                    else if (node.children.length === 1) {
+                        if (node.children[0].type === 'VECTOR') {
+                            // replace vector with new QR code
+                            let vector = node.children[0];
+                            resizeVector(msg, node, vector);
+                        }
+                        else {
+                            figma.notify(`Select a Frame with a vector child`);
+                        }
+                    }
                 }
                 else {
                     figma.notify(`Please select a Frame`);
@@ -80,7 +138,7 @@ figma.ui.onmessage = msg => {
     if (msg.type === 'create-qr-code-raster') {
         // get the current selection in Figma
         var currentSel = figma.currentPage.selection;
-        var padding = 16;
+        var padding = msg.padding;
         // if no selection
         if (currentSel.length === 0) {
             // get image uint8array from canvas
