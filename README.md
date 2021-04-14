@@ -1,8 +1,8 @@
-<!-- <h1 align="center">
+<h1 align="center">
 	<a href="https://github.com/nathakits/qr-figma-plugin">
 		<img src="assets/plugin-file-cover.png" alt="QR Generator"/>
 	</a>
-</h1> -->
+</h1>
 
 <h4 align="center">
   QR Code is a Figma plugin for generating QR codes and inserting into Figma
@@ -12,12 +12,7 @@
   Figma plugin built with Vue.js and Tailwind
 </p>
 
-<!-- <div align="center">
-  <a href="https://github.com/nathakits/spottie-figma-plugin/actions/workflows/node.js.yml">
-    <img src="https://github.com/nathakits/spottie-figma-plugin/actions/workflows/node.js.yml/badge.svg?branch=master" alt="Node.js CI">
-  </a>
-</div>
-<br> -->
+<br>
 
 <!-- ## Download -->
 <!-- Install on Figma -->
