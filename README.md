@@ -26,10 +26,19 @@
 ## Usage
 In Figma select main menu -> Plugins -> QR Code
 
-- Generate QR code from URL
+Type in the text field to generate the QR code
+
+### Support types
+- Plain text
+- URLs (www.example.com)
+- Email (mailto:example@gmail.com)
+- Phone numbers (tel:+12125551212)
+
+### Coming soon!
+- WIFI
+- MECARD
 
 ## Installation and build setup
-The project is separated into 2 sections. The main Figma code and the UI which is based on Vue and Tailwind.
 
 #### For main Figma code
 ```bash
