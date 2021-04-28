@@ -64,5 +64,8 @@ You can find instructions at: https://www.figma.com/plugin-docs/setup/
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
+## Credit
+-  https://github.com/kozakdenys/qr-code-styling
+
 ## License
 MIT [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
