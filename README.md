@@ -12,6 +12,12 @@
   Figma plugin built with Vue.js and Tailwind
 </p>
 
+<div align="center">
+  <a href="https://www.producthunt.com/posts/qr-coder?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-qr-coder" target="_blank">
+    <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=293612&theme=light" alt="QR Coder - Generate QR codes and insert directly into Figma. | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" />
+  </a>
+</div>
+
 <br>
 
 <!-- ## Download -->
