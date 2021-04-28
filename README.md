@@ -1,6 +1,6 @@
 <h1 align="center">
 	<a href="https://github.com/nathakits/qr-figma-plugin">
-		<img src="assets/plugin-file-cover.png" alt="QR Generator"/>
+		<img src="assets/plugin-file-cover.jpg" alt="QR Generator"/>
 	</a>
 </h1>
 
