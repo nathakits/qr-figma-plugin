@@ -39,6 +39,7 @@ Type in the text field to generate the QR code
 - MECARD
 
 ## Installation and build setup
+The project is separated into 2 sections. The main Figma code and the UI which is based on Vue and Tailwind.
 
 #### For main Figma code
 ```bash
