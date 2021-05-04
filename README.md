@@ -24,7 +24,7 @@
 <!-- Install on Figma -->
 
 ## Usage
-In Figma select main menu -> Plugins -> QR Codeพ
+In Figma select main menu -> Plugins -> QR Coder
 
 Type in the text field to generate the QR code
 
