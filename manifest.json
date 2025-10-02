@@ -4,5 +4,9 @@
   "api": "1.0.0",
   "main": "code.js",
   "ui": "UI/dist/index.html",
-  "editorType": ["buzz"]
+  "editorType": ["buzz"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  },
+  "documentAccess": "dynamic-page"
 }
